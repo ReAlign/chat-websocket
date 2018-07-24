@@ -1,0 +1,41 @@
+@color_1: #f03e3e;
+@color_2: #459d36;
+
+.clearfix {
+    &:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+    }
+    *zoom: 1;
+}
+
+.cred {
+    color: @color_1;
+}
+
+.cgreen {
+    color: @color_2;
+}
+
+.hide {
+    display: none;
+}
+
+.fr {
+    float: right;
+}
+
+.fl {
+    float: left;
+}
+
+.rela {
+    position: relative;
+}
+
+.abs {
+    position: absolute;
+}
