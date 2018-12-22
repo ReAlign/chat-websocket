@@ -13,7 +13,9 @@
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "packageinstall": "npm install --registry=https://registry.npm.taobao.org",
+    "go": "npm run packageinstall && npm run build && npm run server"
   },
   "dependencies": {
     "pm2": "2.9.1",

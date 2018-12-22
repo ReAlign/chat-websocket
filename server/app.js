@@ -1,8 +1,27 @@
-const app = require('http').createServer();
+
+// //通过req的hearers来获取客户端ip
+// const getIp = (req) => {
+//     let ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+//     if(ip.split(',').length>0){
+//         ip = ip.split(',')[0];
+//     }
+//     return ip;
+// };
+
+const app = require('http').createServer((req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+});
+
 const io = require('socket.io')(app);
-const PORT = 8081;
+// io.origins(['*']);
+const PORT = 9091;
 /*定义用户数组*/
 let users = [];
+
+const TYPE_DESC = {
+    0: '系统消息',
+    1: '客户端消息'
+};
 
 app.listen(PORT);
 /*
@@ -35,10 +54,11 @@ io.on('connection', (socket) => {
             let resdata = {
                 //username: data.username,	/*发送方用户名*/
                 msgType: 0,
+                msgTypeDesc: TYPE_DESC[0],
                 /*信息类型：0为系统消息，1为客户端消息*/
                 msgDate: new Date(),
                 /*植入服务器时间*/
-                message: `系统消息：${data.username}已加入群聊`
+                message: `${data.username}已加入群聊`
             };
 
             /*登录成功*/
@@ -50,13 +70,15 @@ io.on('connection', (socket) => {
             io.sockets.emit('receiveMessage', resdata);
 
             //io.sockets.emit('add',resdata);
-            console.log('登录成功:', resdata);
+            // console.log('登录成功:', resdata);
 
             /*给除了自己以外的客户端广播消息 2017-12-20*/
             // socket.broadcast.emit('add',resdata);
 
             /*人数变更，广播给所有连接用户*/
-            console.log('当前连接的用户为：', users);
+            // console.log('当前连接的用户为：', users);
+            console.log('新用户：\t', users[users.length - 1]);
+            console.log('新进线用户ip为：', socket.handshake.address);
             io.sockets.emit('amountChange', users.length);
         } else {
             /*登录失败*/
@@ -87,8 +109,9 @@ io.on('connection', (socket) => {
         let resdata = {
             // username: username,
             msgType: 0,
+            msgTypeDesc: TYPE_DESC[0],
             msgDate: new Date(),
-            message: `系统消息：${username}已退出群聊`
+            message: `${username}已退出群聊`
         };
         io.sockets.emit('receiveMessage', resdata);
 

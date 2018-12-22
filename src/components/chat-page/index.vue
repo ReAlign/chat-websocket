@@ -111,6 +111,7 @@ export default {
         vm.socket.on('receiveMessage', (data) => {
             console.log('接收到服务端返回：', data)
             vm.msgList.push(data);
+            // vm.showNotify('login', data);
 
             window.scrollTo(0, document.getElementById('chat_con').scrollHeight);
         })
@@ -172,6 +173,21 @@ export default {
 
             vm.inputMsg = '';
         },
+        showNotify(type, json) {
+            const vm = this;
+            const h = vm.$createElement;
+
+            vm.$notify({
+                title: `${json.msgTypeDesc || "系统消息"}`,
+                message: h(
+                    'i',
+                    {
+                        style: 'color: teal'
+                    },
+                    `${json.message || ""}`
+                )
+            });
+        }
     }
 }
 </script>
