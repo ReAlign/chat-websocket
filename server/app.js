@@ -8,6 +8,18 @@
 //     return ip;
 // };
 
+const exec = require('child_process').exec;
+
+// 成功的例子
+exec('node ./server/server.js', (error, stdout, stderr) => {
+    if(error) {
+        console.error(`error: ${error}`);
+        return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${typeof stderr}`);
+});
+
 const app = require('http').createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
 });
