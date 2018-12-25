@@ -148,32 +148,14 @@ export default {
             const vm = this;
 
             if (!vm.form.uname) {
-                vm.$notify({
-                    title: '系统消息',
-                    message: h(
-                        'i',
-                        {
-                            style: 'color: teal'
-                        },
-                        '请输入昵称'
-                    )
-                });
+                vm.showNotify('sys', { message: '请输入昵称' });
                 return false;
             }
 
             // vm.socket.emit('login', {
             //     username: vm.form.uname
             // });
-            vm.$notify({
-                title: '系统消息',
-                message: h(
-                    'i',
-                    {
-                        style: 'color: teal'
-                    },
-                    ' ￣へ￣ 当前系统不支持在线会话！！！'
-                )
-            });
+            vm.showNotify('sys', { message: ' ￣へ￣ 当前系统不支持在线会话！！！' });
         },
 
         sendMessage() {
