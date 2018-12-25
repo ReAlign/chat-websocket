@@ -85,49 +85,48 @@ export default {
         }
     },
     mounted() {
-        const vm = this;
+        // const vm = this;
 
-        vm.socket = IO(Config.WS_URL);
+        // vm.socket = IO(Config.WS_URL);
 
-        vm.socket.on('loginSuccess', (data) => {
-            if (data.username === vm.form.uname) {
-                vm.isCheckin = true;
-            } else {
-                alert('用户名不匹配，请重试');
-            }
-        })
+        // vm.socket.on('loginSuccess', (data) => {
+        //     if (data.username === vm.form.uname) {
+        //         vm.isCheckin = true;
+        //     } else {
+        //         alert('用户名不匹配，请重试');
+        //     }
+        // })
 
-        /*登录失败*/
-        vm.socket.on('loginFail', function () {
-            alert('昵称重复');
-        })
+        // /*登录失败*/
+        // vm.socket.on('loginFail', function () {
+        //     alert('昵称重复');
+        // })
 
-        /*监听人数*/
-        vm.socket.on('amountChange', (data) => {
-            vm.amount = data;
-        })
+        // /*监听人数*/
+        // vm.socket.on('amountChange', (data) => {
+        //     vm.amount = data;
+        // })
 
-        /*接收消息*/
-        vm.socket.on('receiveMessage', (data) => {
-            console.log('接收到服务端返回：', data)
-            vm.msgList.push(data);
-            // vm.showNotify('login', data);
+        // /*接收消息*/
+        // vm.socket.on('receiveMessage', (data) => {
+        //     console.log('接收到服务端返回：', data)
+        //     vm.msgList.push(data);
+        //     // vm.showNotify('login', data);
 
-            window.scrollTo(0, document.getElementById('chat_con').scrollHeight);
-        })
+        //     window.scrollTo(0, document.getElementById('chat_con').scrollHeight);
+        // })
 
-        /*新人加入提示*/
-        vm.socket.on('add', function (data) {
-            console.log(data);
-        })
-        /*退出群聊提示*/
-        vm.socket.on('leave', function (name) {
-            console.log('退出===', name)
-            if (name != null) {
+        // /*新人加入提示*/
+        // vm.socket.on('add', function (data) {
+        //     console.log(data);
+        // })
+        // /*退出群聊提示*/
+        // vm.socket.on('leave', function (name) {
+        //     console.log('退出===', name)
+        //     if (name != null) {
 
-            }
-        })
-
+        //     }
+        // })
     },
     filters: {
         formatDate(d) {
@@ -149,12 +148,31 @@ export default {
             const vm = this;
 
             if (!vm.form.uname) {
-                alert('请输入昵称');
+                vm.$notify({
+                    title: '系统消息',
+                    message: h(
+                        'i',
+                        {
+                            style: 'color: teal'
+                        },
+                        '请输入昵称'
+                    )
+                });
                 return false;
             }
 
-            vm.socket.emit('login', {
-                username: vm.form.uname
+            // vm.socket.emit('login', {
+            //     username: vm.form.uname
+            // });
+            vm.$notify({
+                title: '系统消息',
+                message: h(
+                    'i',
+                    {
+                        style: 'color: teal'
+                    },
+                    ' ￣へ￣ 当前系统不支持在线会话！！！'
+                )
             });
         },
 
