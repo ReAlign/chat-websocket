@@ -35,9 +35,9 @@
                 <template v-else>
                     <div
                         class="chat-item item-right clearfix"
-                        v-if="form.uname == item.username ">
+                        v-if="form.uname == item.username">
                         <span class="img fr"></span>
-                        <span class="message fr">{{item.message}}</span>
+                        <span class="message fr" v-html="`${(item.message || '').replace(/\n/ig, '<br>')}`"></span>
                     </div>
                     <div
                         class="chat-item item-left clearfix rela"
@@ -46,15 +46,21 @@
                             {{item.username}}  ( {{item.msgDate | formatDate}} )
                         </span>
                         <span class="img fl"></span>
-                        <span class="fl message">
-                            {{item.message}}
-                        </span>
+                        <span class="fl message" v-html="`${(item.message || '').replace(/\n/ig, '<br>')}`"></span>
                     </div>
                 </template>
             </template>
         </div>
         <div class="bottom">
-            <input type="text" id="sendtxt" v-model.trim="inputMsg" @keyup.13="sendMessage">
+            <el-input
+                type="textarea"
+                id="sendtxt"
+                :autosize="{ minRows: 1, maxRows: 4}"
+                resize="none"
+                placeholder="请输入内容"
+                v-model.trim="inputMsg"
+                @keyup.13="sendMessage">
+            </el-input>
             <button class="sendBtn" @click="sendMessage">发送</button>
         </div>
     </div>
@@ -76,7 +82,7 @@ export default {
             amount: 0,
             uname: 'realign',
             form: {
-                uname: 'realign'
+                uname: `user${Math.floor(Math.random() * (1000 - 1)) + 1}`
             },
             inputMsg: '',
             socket: null,
@@ -85,48 +91,48 @@ export default {
         }
     },
     mounted() {
-        // const vm = this;
+        const vm = this;
 
-        // vm.socket = IO(Config.WS_URL);
+        vm.socket = IO(Config.WS_URL);
 
-        // vm.socket.on('loginSuccess', (data) => {
-        //     if (data.username === vm.form.uname) {
-        //         vm.isCheckin = true;
-        //     } else {
-        //         alert('用户名不匹配，请重试');
-        //     }
-        // })
+        vm.socket.on('loginSuccess', (data) => {
+            if (data.username === vm.form.uname) {
+                vm.isCheckin = true;
+            } else {
+                alert('用户名不匹配，请重试');
+            }
+        })
 
-        // /*登录失败*/
-        // vm.socket.on('loginFail', function () {
-        //     alert('昵称重复');
-        // })
+        /*登录失败*/
+        vm.socket.on('loginFail', function () {
+            alert('昵称重复');
+        })
 
-        // /*监听人数*/
-        // vm.socket.on('amountChange', (data) => {
-        //     vm.amount = data;
-        // })
+        /*监听人数*/
+        vm.socket.on('amountChange', (data) => {
+            vm.amount = data;
+        })
 
-        // /*接收消息*/
-        // vm.socket.on('receiveMessage', (data) => {
-        //     console.log('接收到服务端返回：', data)
-        //     vm.msgList.push(data);
-        //     // vm.showNotify('login', data);
+        /*接收消息*/
+        vm.socket.on('receiveMessage', (data) => {
+            console.log('接收到服务端返回：', data)
+            vm.msgList.push(data);
+            // vm.showNotify('login', data);
 
-        //     window.scrollTo(0, document.getElementById('chat_con').scrollHeight);
-        // })
+            window.scrollTo(0, document.getElementById('chat_con').scrollHeight);
+        })
 
-        // /*新人加入提示*/
-        // vm.socket.on('add', function (data) {
-        //     console.log(data);
-        // })
-        // /*退出群聊提示*/
-        // vm.socket.on('leave', function (name) {
-        //     console.log('退出===', name)
-        //     if (name != null) {
+        /*新人加入提示*/
+        vm.socket.on('add', function (data) {
+            console.log(data);
+        })
+        /*退出群聊提示*/
+        vm.socket.on('leave', function (name) {
+            console.log('退出===', name)
+            if (name != null) {
 
-        //     }
-        // })
+            }
+        })
     },
     filters: {
         formatDate(d) {
@@ -152,17 +158,21 @@ export default {
                 return false;
             }
 
-            // vm.socket.emit('login', {
-            //     username: vm.form.uname
-            // });
-            vm.showNotify('sys', { message: ' ￣へ￣ 当前系统不支持在线会话！！！' });
+            vm.socket.emit('login', {
+                username: vm.form.uname
+            });
+            // vm.showNotify('sys', { message: ' ￣へ￣ 当前系统不支持在线会话！！！' });
         },
 
         sendMessage() {
             const vm = this;
 
             if (!vm.inputMsg) {
-                alert('请输入……');
+                this.$notify({
+                    title: '警告',
+                    message: '不能发送空消息哦',
+                    type: 'warning'
+                });
                 return false;
             }
 
